@@ -1,0 +1,27 @@
+{
+  "name": "jatra",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "test": "node --test tests/*.test.js",
+    "preview": "vite preview --host 127.0.0.1",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run format:check && npm test && npm run build"
+  },
+  "dependencies": {
+    "cannon-es": "0.20.0",
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "prettier": "3.9.6",
+    "vite": "^7.3.6"
+  },
+  "description": "A Newari chariot workshop and procession game built with Three.js and Cannon-es.",
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

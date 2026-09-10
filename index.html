@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#ede8da" />
+    <title>Jatra — Build a tradition. Carry it forward.</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <canvas id="scene" aria-label="Interactive 3D Newari chariot workshop"></canvas>
+    <header>
+      <a class="brand" href="./"
+        >जात्रा <span>JATRA<small>A JOURNEY IN BALANCE</small></span></a
+      >
+      <nav>
+        <span id="workshop-tab" class="active">01 &nbsp; THE WORKSHOP</span><i></i
+        ><span id="route-tab">02 &nbsp; THE PROCESSION</span>
+      </nav>
+      <div class="audio-controls">
+        <button id="sound-toggle" aria-pressed="false" title="Mute or unmute procession audio">
+          Mute sound</button
+        ><label for="sound-volume"
+          >Volume<input
+            id="sound-volume"
+            type="range"
+            min="0"
+            max="100"
+            value="45"
+            aria-label="Procession volume"
+        /></label>
+      </div>
+      <button id="soundless" title="Show keyboard controls">? <span>CONTROLS</span></button>
+    </header>
+    <main>
+      <section class="intro">
+        <p class="eyebrow" id="eyebrow">KATHMANDU VALLEY · A LIVING TRADITION</p>
+        <h1 id="heading">Built by hand.<br />Moved by many.</h1>
+        <p id="description">
+          Timber, rope, and a little faith. Assemble your chariot,<br />then guide a procession
+          through the old city.
+        </p>
+      </section>
+      <aside class="panel" id="builder-panel">
+        <div class="panel-top"><span>YOUR CHARIOT</span><span id="part-count">01 / 05</span></div>
+        <h2 id="part-title">Dhama</h2>
+        <p id="part-subtitle">The central spine</p>
+        <div class="material">
+          <span class="wood-swatch"></span>
+          <div><small>SELECTED TIMBER</small><strong id="wood-name">Sau / Saur</strong></div>
+          <span class="tag">NATIVE WOOD</span>
+        </div>
+        <div class="option-row">
+          <button id="previous" aria-label="Previous construction option">←</button>
+          <div><strong id="option-name">Traditional</strong><small>CONSTRUCTION</small></div>
+          <button id="next" aria-label="Next construction option">→</button>
+        </div>
+        <dl>
+          <div>
+            <dt>Weight</dt>
+            <dd id="weight">—</dd>
+          </div>
+          <div>
+            <dt>Flexibility</dt>
+            <dd id="flex">—</dd>
+          </div>
+          <div>
+            <dt>Joint strength</dt>
+            <dd id="strength">—</dd>
+          </div>
+        </dl>
+        <p class="part-note" id="part-note"></p>
+        <div class="part-navigation">
+          <button id="up" aria-label="Previous part">↑</button
+          ><button id="down" aria-label="Next part">↓</button><span>EXPLORE CHARIOT PARTS</span>
+        </div>
+      </aside>
+      <aside class="panel hidden" id="simulation-panel">
+        <div class="panel-top">PROCESSION TELEMETRY <span class="live-dot">● LIVE</span></div>
+        <h2 id="checkpoint">Basantapur</h2>
+        <p id="next-stop">Next: Pyaphal</p>
+        <p id="turn-preview" aria-label="Upcoming turn"></p>
+        <div class="camera-buttons">
+          <button id="overhead-view">Overhead view</button
+          ><button id="reset-view">Reset view</button>
+        </div>
+        <dl>
+          <div>
+            <dt>Speed</dt>
+            <dd id="speed">0.0 km/h</dd>
+          </div>
+          <div>
+            <dt>Momentum</dt>
+            <dd id="momentum">0 kN·s</dd>
+          </div>
+          <div>
+            <dt>Steering</dt>
+            <dd id="steering">STRAIGHT</dd>
+          </div>
+          <div>
+            <dt>Joints intact</dt>
+            <dd id="joints">—</dd>
+          </div>
+        </dl>
+        <div class="steer-buttons">
+          <button data-steer="ArrowLeft" aria-label="Hold to turn left">← Left</button
+          ><button data-steer="ArrowRight" aria-label="Hold to turn right">Right →</button>
+        </div>
+        <label
+          >TEAM EFFORT <span id="effort-value">0%</span
+          ><meter id="effort" min="0" max="1" value="0"></meter></label
+        ><label
+          >PEAK JOINT STRESS <span id="stress-value">0%</span
+          ><meter id="stress" min="0" max="1" high="0.75" optimum="0.2" value="0"></meter></label
+        ><label
+          >STRUCTURAL DAMAGE <span id="damage-value">0%</span
+          ><meter id="damage" min="0" max="1" value="0"></meter
+        ></label>
+        <p id="road-warning" role="status" aria-live="polite">ON PATH</p>
+        <p class="part-note">
+          8 m streets. Slow before sharp corners.<br />Heave together. Ease off before turns.<br />Apply
+          the brakes gradually.
+        </p>
+        <button id="rebuild" class="text-button">↺ Return to workshop</button>
+      </aside>
+      <div id="status" role="status" aria-live="polite">A tradition in your hands.</div>
+      <section class="route-card">
+        <div class="panel-top">
+          <span>THANEYA · NORTHERN ROUTE</span><span id="route-length"></span>
+        </div>
+        <svg
+          id="route-map"
+          viewBox="0 0 250 100"
+          role="img"
+          aria-label="Procession loop from Basantapur through twelve stops"
+        ></svg>
+        <div class="route-caption">
+          <span id="route-start">Basantapur</span><span id="route-end">Basantapur (End) ↗</span>
+        </div>
+      </section>
+      <div class="bottom">
+        <div class="controls-hint" id="hint">
+          <kbd>↑</kbd><kbd>↓</kbd> Select part <span></span><kbd>←</kbd><kbd>→</kbd> Customize
+          <span></span> Drag to orbit
+        </div>
+        <button class="primary" id="start">Begin the procession <span>↗</span></button>
+      </div>
+    </main>
+    <footer>
+      <span>INSPIRED BY THE NEWARI CHARIOT TRADITION</span
+      ><span>BUILD WITH CARE. PULL TOGETHER.</span>
+    </footer>
+    <dialog id="help">
+      <h2>Carry it together.</h2>
+      <p>
+        <b>Workshop:</b> ↑ / ↓ select a part; ← / → change construction. Drag to orbit, scroll to
+        zoom. Enter begins.
+      </p>
+      <p>
+        <b>Procession:</b> Drag the scene to orbit the camera and scroll to zoom. Use Overhead view
+        to see over buildings; Reset view restores the default angle. The camera stays centered on
+        the chariot, including while paused. Hold W to build pulling effort. ← / → turn the chariot
+        left / right, even from rest. You can also hold the on-screen Left / Right buttons. The
+        steering readout shows the direction received. If both are held, the last direction pressed
+        wins. Hold Space to progressively apply Ma eel brakes. Release to coast. P pauses. R returns
+        to the workshop.
+      </p>
+      <p>
+        <b>Sound:</b> The procession begins with sound at a moderate volume. Use Mute sound and the
+        Volume slider in the header. Audio pauses with P, the controls dialog, or a hidden tab, and
+        stops when returning to the workshop.
+      </p>
+      <p>
+        Follow the gold checkpoints in order through 8 m streets and tight bends. Watch the
+        next-turn distance, brake early, and keep the whole chariot on the road. Leaving the road
+        progressively damages joints; returning stops further damage but does not repair it. A
+        broken joint or a tipped chariot ends the attempt; the physics keeps running so you can see
+        the collapse.
+      </p>
+      <form method="dialog"><button class="primary">Understood</button></form>
+    </dialog>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

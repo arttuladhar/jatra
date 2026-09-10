@@ -1,0 +1,89 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Thaneya Procession Route",
+        "description": "The complete loop for the Northern Procession"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [85.3065, 27.7042],
+          [85.306, 27.705],
+          [85.3055, 27.706],
+          [85.305, 27.7075],
+          [85.306, 27.7085],
+          [85.308, 27.708],
+          [85.3095, 27.7075],
+          [85.3115, 27.7061],
+          [85.3105, 27.7056],
+          [85.3094, 27.7051],
+          [85.3075, 27.7048],
+          [85.3065, 27.7042]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Basantapur", "stop": 1 },
+      "geometry": { "type": "Point", "coordinates": [85.3065, 27.7042] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Pyaphal", "stop": 2 },
+      "geometry": { "type": "Point", "coordinates": [85.306, 27.705] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Yatkha", "stop": 3 },
+      "geometry": { "type": "Point", "coordinates": [85.3055, 27.706] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Nyata", "stop": 4 },
+      "geometry": { "type": "Point", "coordinates": [85.305, 27.7075] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Tengal", "stop": 5 },
+      "geometry": { "type": "Point", "coordinates": [85.306, 27.7085] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Nhyokha", "stop": 6 },
+      "geometry": { "type": "Point", "coordinates": [85.308, 27.708] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Nhaikan Tol", "stop": 7 },
+      "geometry": { "type": "Point", "coordinates": [85.3095, 27.7075] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Asan", "stop": 8 },
+      "geometry": { "type": "Point", "coordinates": [85.3115, 27.7061] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Kel Tol", "stop": 9 },
+      "geometry": { "type": "Point", "coordinates": [85.3105, 27.7056] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Indra Chowk", "stop": 10 },
+      "geometry": { "type": "Point", "coordinates": [85.3094, 27.7051] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Makhan", "stop": 11 },
+      "geometry": { "type": "Point", "coordinates": [85.3075, 27.7048] }
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Basantapur (End)", "stop": 12 },
+      "geometry": { "type": "Point", "coordinates": [85.3065, 27.7042] }
+    }
+  ]
+}

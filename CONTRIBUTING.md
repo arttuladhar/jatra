@@ -28,6 +28,6 @@ Automated tests exercise simulation and media scheduling with a fake media eleme
 
 ## Scope and assets
 
-Preserve vanilla ES modules, Three.js, Cannon-es, and the Workshop → Procession loop. `PROMPT.md` is the original design brief; current behavior and the supplied `route-map.json` take precedence over its older route description. `TODO.md` distinguishes completed work from remaining prototype limitations. See `docs/ASSETS.md` for the checked-in media inventory.
+Preserve vanilla ES modules, Three.js, Cannon-es, and the Workshop → Procession loop. `PROMPT.md` describes the current system and behavior to preserve; the supplied `route-map.json` remains the source of truth for route coordinates and stop names. `TODO.md` distinguishes completed work from remaining prototype limitations. See `docs/ASSETS.md` for the checked-in media inventory.
 
 The supplied `.github/workflows/deploy-pages.yml` runs checks and publishes `dist/` on pushes to `main` or manual dispatch. It requires GitHub Pages to be configured to use GitHub Actions in the repository settings. Its build and deployment actions are pinned to commit revisions.

@@ -12,12 +12,21 @@ export function controlCode(event, isWorkshop) {
         ? `Key${letter.toUpperCase()}`
         : event.code || event.key;
   if (['Enter', 'Space'].includes(code)) {
-    if (!isWorkshop && target?.dataset?.steer) return target.dataset.steer;
+    if (!isWorkshop && target?.dataset?.hold) return target.dataset.hold;
     if (target?.closest?.('button, a[href]')) return null;
   }
   return code;
 }
-export function bindControls({ select, change, start, rebuild, pause, isWorkshop, blocked }) {
+export function bindControls({
+  select,
+  change,
+  start,
+  rebuild,
+  pause,
+  isWorkshop,
+  blocked,
+  canHold,
+}) {
   const keys = new Set(),
     relevant = [
       'ArrowUp',
@@ -30,6 +39,24 @@ export function bindControls({ select, change, start, rebuild, pause, isWorkshop
       'KeyR',
       'Enter',
     ];
+  // Track each finger/key separately so releasing one input cannot cancel another.
+  const held = new Map();
+  function press(source, code) {
+    if (held.has(source)) return;
+    held.set(source, code);
+    keys.delete(code);
+    keys.add(code);
+  }
+  function release(source) {
+    const code = held.get(source);
+    held.delete(source);
+    if (![...held.values()].includes(code)) keys.delete(code);
+  }
+  function clear() {
+    held.clear();
+    keys.clear();
+    for (const button of document.querySelectorAll('[data-hold]')) button.classList.remove('held');
+  }
   window.addEventListener(
     'keydown',
     (e) => {
@@ -38,7 +65,7 @@ export function bindControls({ select, change, start, rebuild, pause, isWorkshop
       if (!relevant.includes(code)) return;
       e.preventDefault();
       e.stopPropagation();
-      keys.add(code);
+      press(`key:${e.code || e.key?.toLowerCase()}`, code);
       if (e.repeat) return;
       if (code === 'KeyR') rebuild();
       if (isWorkshop()) {
@@ -54,27 +81,24 @@ export function bindControls({ select, change, start, rebuild, pause, isWorkshop
   window.addEventListener(
     'keyup',
     (e) => {
-      keys.delete(controlCode(e, isWorkshop()));
-      keys.delete(e.code);
+      release(`key:${e.code || e.key?.toLowerCase()}`);
     },
     { capture: true },
   );
-  window.addEventListener('blur', () => keys.clear());
-  document.addEventListener('visibilitychange', () => keys.clear());
-  return keys;
-}
-
-export function bindSteeringButtons(keys, enabled) {
-  for (const button of document.querySelectorAll('[data-steer]')) {
+  window.addEventListener('blur', clear);
+  document.addEventListener('visibilitychange', clear);
+  for (const button of document.querySelectorAll('[data-hold]')) {
+    button.addEventListener('contextmenu', (event) => event.preventDefault());
     button.addEventListener('pointerdown', (event) => {
-      if (!enabled()) return;
+      if (!canHold() || (event.pointerType === 'mouse' && event.button !== 0)) return;
       event.preventDefault();
       button.setPointerCapture(event.pointerId);
-      keys.add(button.dataset.steer);
+      press(`pointer:${event.pointerId}`, button.dataset.hold);
     });
-    const release = () => keys.delete(button.dataset.steer);
-    button.addEventListener('pointerup', release);
-    button.addEventListener('pointercancel', release);
-    button.addEventListener('lostpointercapture', release);
+    const end = (event) => release(`pointer:${event.pointerId}`);
+    button.addEventListener('pointerup', end);
+    button.addEventListener('pointercancel', end);
+    button.addEventListener('lostpointercapture', end);
   }
+  return { keys, clear };
 }

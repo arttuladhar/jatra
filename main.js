@@ -19,7 +19,7 @@ import {
   sync,
   CANNON,
 } from './physics.js';
-import { bindControls, bindSteeringButtons } from './controls.js';
+import { bindControls } from './controls.js';
 import { createTeams, updateTeams } from './teams.js';
 import { createProcessionAudio } from './sound.js';
 import {
@@ -40,11 +40,13 @@ let renderer;
 try {
   renderer = new THREE.WebGLRenderer({ canvas: $('scene'), antialias: true });
 } catch (error) {
+  $('status').style.display = 'block';
   $('status').textContent = 'WebGL is unavailable. Enable hardware acceleration and reload.';
   throw error;
 }
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.setSize(innerWidth, innerHeight);
+const touchDevice = matchMedia('(pointer: coarse)').matches;
+renderer.setPixelRatio(Math.min(devicePixelRatio, touchDevice ? 1.5 : 2));
+renderer.setSize(innerWidth, innerHeight, false);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.setClearColor('#e8e6d7');
@@ -64,7 +66,8 @@ scene.add(new THREE.HemisphereLight('#fff9e8', '#797b59', 2.8));
 const sun = new THREE.DirectionalLight('#fff0cd', 3.3);
 sun.position.set(-20, 35, 18);
 sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048);
+const shadowSize = touchDevice ? 1024 : 2048;
+sun.shadow.mapSize.set(shadowSize, shadowSize);
 Object.assign(sun.shadow.camera, { left: -25, right: 25, top: 25, bottom: -25, near: 1, far: 100 });
 sun.shadow.bias = -0.0005;
 scene.add(sun, sun.target);
@@ -174,6 +177,11 @@ function rebuild() {
   chariot = makeChariot(selection);
   scene.add(chariot.group);
   phase = 'workshop';
+  document.body.dataset.phase = phase;
+  input.clear();
+  $('play-controls').classList.add('hidden');
+  $('pause').textContent = 'Pause';
+  $('pause').setAttribute('aria-pressed', 'false');
   rig = null;
   paused = false;
   checkpoint = 0;
@@ -226,12 +234,14 @@ function start() {
   sync(rig);
   route = createRoute(scene, world);
   phase = 'procession';
+  document.body.dataset.phase = phase;
+  $('play-controls').classList.remove('hidden');
   workshop.visible = label.visible = false;
   teams.visible = true;
   orbit.enabled = true;
   orbit.enablePan = false;
   setProcessionView();
-  keys.clear();
+  input.clear();
   $('builder-panel').classList.add('hidden');
   $('simulation-panel').classList.remove('hidden');
   $('start').classList.add('hidden');
@@ -241,22 +251,29 @@ function start() {
   $('description').textContent = 'Brake before striped speed bumps and tight corners.';
   $('hint').innerHTML =
     '<kbd>W</kbd> Heave <span></span><kbd>←</kbd><kbd>→</kbd> Turn left / right <span></span><kbd>Space</kbd> Brake <span></span><kbd>P</kbd> Pause <span></span> Drag to orbit · Scroll to zoom';
-  $('status').textContent = `Hold W to build a steady heave. Next: ${ROUTE[1].name}.`;
+  $('status').textContent = `Hold Pull or W to build a steady heave. Next: ${ROUTE[1].name}.`;
 }
-const keys = bindControls({
+function togglePause() {
+  paused = !paused;
+  input.clear();
+  $('pause').textContent = paused ? 'Resume' : 'Pause';
+  $('pause').setAttribute('aria-pressed', String(paused));
+  $('status').textContent = paused
+    ? 'Paused · Tap Resume or press P.'
+    : 'The procession continues.';
+}
+const input = bindControls({
   select,
   change,
   start,
   rebuild,
-  pause: () => {
-    paused = !paused;
-    keys.clear();
-    $('status').textContent = paused ? 'Paused · Press P to resume.' : 'The procession continues.';
-  },
+  pause: togglePause,
   isWorkshop: () => phase === 'workshop',
   blocked: () => $('help').open,
+  canHold: () => phase === 'procession' && !paused && !$('help').open,
 });
-bindSteeringButtons(keys, () => phase === 'procession' && !paused && !$('help').open);
+const { keys } = input;
+$('pause').onclick = togglePause;
 $('overhead-view').onclick = () => setProcessionView(true);
 $('reset-view').onclick = () => setProcessionView();
 $('up').onclick = () => select(-1);
@@ -266,7 +283,7 @@ $('next').onclick = () => change(1);
 $('start').onclick = start;
 $('rebuild').onclick = rebuild;
 $('soundless').onclick = () => {
-  keys.clear();
+  input.clear();
   $('help').showModal();
 };
 async function enableAudio() {
@@ -367,12 +384,12 @@ function animate(now) {
         if (broken.length && phase === 'procession') {
           phase = 'failed';
           $('status').textContent =
-            `${rig.offRoad > 0 ? 'Off-road damage! ' : ''}Joint failed: ${broken[0]}. Press R to rebuild.`;
+            `${rig.offRoad > 0 ? 'Off-road damage! ' : ''}Joint failed: ${broken[0]}. Tap Workshop or press R to rebuild.`;
         }
         const up = rig.base.quaternion.vmult(new CANNON.Vec3(0, 1, 0));
         if (up.y < 0.45 && phase === 'procession') {
           phase = 'failed';
-          $('status').textContent = 'The chariot tipped. Press R to rebuild.';
+          $('status').textContent = 'The chariot tipped. Tap Workshop or press R to rebuild.';
         }
         accumulator -= STEP;
       }
@@ -413,11 +430,13 @@ function animate(now) {
       paused: paused || $('help').open || document.hidden,
       pulling: keys.has('KeyW') || keys.has('ArrowLeft') || keys.has('ArrowRight'),
     });
-    for (const button of document.querySelectorAll('[data-steer]'))
-      button.classList.toggle('held', keys.has(button.dataset.steer));
+    for (const button of document.querySelectorAll('[data-hold]')) {
+      button.disabled = phase !== 'procession' || paused || $('help').open;
+      button.classList.toggle('held', !button.disabled && keys.has(button.dataset.hold));
+    }
     $('steering').textContent =
       phase === 'failed'
-        ? 'DISABLED — PRESS R TO REBUILD'
+        ? 'DISABLED — REBUILD'
         : phase === 'won'
           ? 'COMPLETE'
           : paused || $('help').open
@@ -458,8 +477,11 @@ function animate(now) {
   renderer.render(scene, camera);
 }
 requestAnimationFrame(animate);
-window.addEventListener('resize', () => {
-  camera.aspect = innerWidth / innerHeight;
+function resizeScene() {
+  const { width, height } = $('scene').getBoundingClientRect();
+  camera.aspect = width / height;
   camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
-});
+  renderer.setSize(width, height, false);
+}
+new ResizeObserver(resizeScene).observe($('scene'));
+resizeScene();

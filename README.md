@@ -11,9 +11,13 @@ npm ci
 npm run dev
 ```
 
-Open http://127.0.0.1:5173. Use `npm test` for physics, route, input, team-animation, and audio checks; `npm run build` writes a deployable site to `dist/`. A WebGL-capable desktop browser and keyboard are recommended.
+Open http://127.0.0.1:5173. Use `npm test` for physics, route, input, team-animation, and audio checks; `npm run build` writes a deployable site to `dist/`. Use a WebGL-capable desktop or mobile browser. Both keyboard and touch controls are supported.
 
 ## Controls
+
+- Mobile workshop: tap ↑ / ↓ to choose a part and ← / → to change construction, then tap Begin the procession. Swipe the scene to orbit and pinch to zoom.
+- Mobile procession: hold Pull to build effort, and hold Left or Right with another finger to steer. Release Pull to coast; hold Brake to slow down. Pause / Resume and Workshop stay available below the scene. Scroll the telemetry panel for camera views and more readings.
+- Portrait layouts reserve the top of the screen for the scene and place scrollable panels below it. Short landscape layouts place panels beside the scene. Controls respect display cutouts and the home indicator; touch devices use a 1.5× render pixel-ratio cap and 1024px shadows to reduce GPU load.
 
 - Workshop: Up/Down selects actual 3D parts; Left/Right changes Traditional, Reinforced, or Slender construction. The camera pans to the selection. Drag to orbit; scroll to zoom. Enter or the button starts.
 - Procession: hold W to ramp up team effort. Left/Right arrows turn left/right with a bounded steering assist, including from rest. If both are held, the most recently pressed direction wins; releasing it restores the other held direction. Space gradually applies brakes. Release to coast; P pauses; R rebuilds.
@@ -27,7 +31,7 @@ Open http://127.0.0.1:5173. Use `npm test` for physics, route, input, team-anima
 - `physics.js`: world, independently simulated pieces, hinges, lock constraints, reaction-force fracture, rope forces and brake drag.
 - `teams.js`: articulated pullers, speed-driven strides, effort-driven heaves, and ropes following their hands. Animation uses simulation time so pause/help freezes it.
 - `sound.js`: streamed procession playlist and pulling audio, using native media elements.
-- `controls.js`: held-key state and discrete workshop actions.
+- `controls.js`: shared keyboard / multi-touch hold state and discrete workshop actions. Each input is tracked separately; cancellation, lost pointer capture, help, pause, rebuild, blur, and hidden tabs release held controls.
 - `route.js`: a GeoJSON-derived loop with twelve ordered stops, street meshes, collidable buildings, and bumps.
 - `style.css` / `index.html`: responsive overlay and accessible controls.
 
@@ -47,7 +51,7 @@ Steering uses an intentional gameplay assist: Left/Right arrows smoothly yaw the
 
 The procession camera supports drag-to-orbit and scroll-to-zoom while following the chariot. Your chosen angle and distance are preserved as it moves, and camera controls also work while paused. Use Overhead view to see over buildings or Reset view to restore the elevated default. The Steering readout shows the received direction, or explains when steering is paused/disabled. Keys also work in browsers that omit KeyboardEvent.code.
 
-Game keys are handled during event capture so page-level shortcut handlers cannot swallow steering events. Hold the on-screen Left/Right buttons with a mouse or touch as an alternative; focused buttons also support holding Space/Enter.
+Game keys are handled during event capture so page-level shortcut handlers cannot swallow steering events. Hold the on-screen Pull, Brake, or Left/Right buttons with a mouse or touch as an alternative; focused buttons also support holding Space/Enter.
 
 Road bumps have yellow/charcoal stripes only, with no signs or approach markings. Release W and hold Space before crossing. Bump dimensions and physics are unchanged; placements follow the current road segments. Houses use stylized Newari-inspired brick courses, dark timber bands, projecting lattice window frames, stone plinths, and pitched terracotta roofs. Each street side has its own deterministic sequence of narrow/wide frontages, one-to-five-storey heights, setbacks, and empty lots, breaking up the repeated rows. Occasional two- or three-tier neighborhood temples replace houses, with stepped stone bases, timber struts, and brass finials. Building bodies match the varied footprints, and scenery placement checks all streets to keep the route clear. Shared procedural textures keep details lightweight.
 
@@ -57,7 +61,7 @@ The procession starts at Basantapur facing Pyaphal. All chariot bodies rotate to
 
 ## Procession audio
 
-Starting the procession unlocks browser audio at 45% volume. `audio/jatra1.mp3` plays first, followed by `audio/jatra2.mp3`, then the pair repeats. Holding W, either steering arrow, or an on-screen steering button loops `audio/jatra_pull.mp3` over the music. Releasing all pulling controls stops and rewinds the pull clip. Background music is slightly quieter during pulling so the call remains audible. The synthesized soundscape has been removed.
+Starting the procession unlocks browser audio at 45% volume. `audio/jatra1.mp3` plays first, followed by `audio/jatra2.mp3`, then the pair repeats. Holding W, either steering arrow, or an on-screen pulling/steering button loops `audio/jatra_pull.mp3` over the music. Releasing all pulling controls stops and rewinds the pull clip. Background music is slightly quieter during pulling so the call remains audible. The synthesized soundscape has been removed.
 
 Header controls mute both recordings or adjust their volume, including before starting. Pause, the controls dialog, and hidden tabs pause playback without losing the music position. Returning to the workshop resets to the first track; success and failure stop both recordings. If autoplay blocks playback, use Enable sound. The two native audio elements are authorized together by the start gesture so the pull clip can play later without another click. Recordings stream directly, and Vite includes all three MP3s in the production build. Physics and steering are unchanged.
 

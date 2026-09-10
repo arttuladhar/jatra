@@ -381,73 +381,6 @@ button:focus-visible {
     bottom: 12px;
   }
 }
-@media (max-width: 760px) {
-  header {
-    height: 80px;
-  }
-  nav {
-    display: none;
-  }
-  main {
-    height: calc(100dvh - 115px);
-  }
-  .intro {
-    top: 10px;
-  }
-  h1 {
-    font-size: 28px;
-  }
-  .intro > p:last-child {
-    display: none;
-  }
-  .eyebrow {
-    font-size: 7px;
-  }
-  .panel {
-    top: 132px;
-    width: 200px;
-    padding: 13px;
-  }
-  .panel h2 {
-    font-size: 23px;
-  }
-  .tag,
-  .part-note {
-    display: none;
-  }
-  .material {
-    gap: 8px;
-  }
-  .route-card {
-    width: 125px;
-    top: 8px;
-  }
-  .route-card .panel-top {
-    font-size: 7px;
-    line-height: 1.6;
-  }
-  .controls-hint {
-    display: none;
-  }
-  .bottom {
-    justify-content: flex-end;
-  }
-  .primary {
-    padding: 14px 18px;
-  }
-  footer {
-    height: 35px;
-    font-size: 6px;
-  }
-  footer span:last-child {
-    display: none;
-  }
-  #status {
-    bottom: 72px;
-    width: 160px;
-  }
-}
-
 @media (min-width: 761px) and (max-height: 850px) {
   .intro > p:last-child {
     font-size: 11px;
@@ -482,32 +415,6 @@ button:focus-visible {
     max-height: calc(100dvh - 405px);
   }
 }
-@media (max-width: 760px) {
-  #simulation-panel {
-    max-height: calc(100dvh - 320px);
-  }
-}
-
-.steer-buttons {
-  display: flex;
-  gap: 8px;
-}
-.steer-buttons button {
-  flex: 1;
-  border: 1px solid #b5bba5;
-  border-radius: 3px;
-  padding: 10px;
-  background: #f4f1e6;
-  font-size: 12px;
-  touch-action: none;
-  user-select: none;
-}
-.steer-buttons button.held,
-.steer-buttons button:active {
-  background: #a64c32;
-  color: #fff7e9;
-}
-
 #turn-preview {
   font-size: 12px;
   font-weight: 700;
@@ -601,5 +508,247 @@ button:focus-visible {
   }
   .audio-controls input {
     width: 55px;
+  }
+}
+
+/* The hold controls stay outside scrolling telemetry, within reach of both thumbs. */
+#play-controls {
+  position: absolute;
+  right: 4%;
+  bottom: 62px;
+  width: min(360px, 92%);
+  pointer-events: auto;
+}
+.play-actions,
+.hold-buttons {
+  display: flex;
+  gap: 8px;
+}
+.play-actions {
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+#play-controls button {
+  min-height: 44px;
+  border: 1px solid #b5bba5;
+  border-radius: 6px;
+  background: #f9f7ef;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.hold-buttons button {
+  flex: 1;
+  min-width: 0;
+  min-height: 56px !important;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+#play-controls .pull-button,
+#play-controls button.held {
+  background: #a64c32;
+  color: #fff7e9;
+}
+#play-controls button.held {
+  box-shadow: inset 0 0 0 3px #e2b66b;
+}
+#play-controls button:disabled {
+  opacity: 0.5;
+}
+body[data-phase='procession'] #status {
+  bottom: 184px;
+}
+button {
+  touch-action: manipulation;
+}
+#scene {
+  touch-action: none;
+}
+dialog {
+  width: calc(100% - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+@media (pointer: coarse) {
+  button,
+  .option-row button,
+  .part-navigation button,
+  .audio-controls button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .audio-controls input {
+    min-height: 32px;
+  }
+}
+/* Reserve an unobstructed camera viewport above the scrollable mobile panels. */
+@media (max-width: 900px), (max-height: 600px) {
+  :root {
+    --header-height: calc(60px + env(safe-area-inset-top));
+    --bottom-inset: max(8px, env(safe-area-inset-bottom));
+  }
+  header {
+    position: fixed;
+    inset: 0 0 auto;
+    height: var(--header-height);
+    margin: 0;
+    padding: env(safe-area-inset-top) max(12px, env(safe-area-inset-right)) 0
+      max(12px, env(safe-area-inset-left));
+    gap: 8px;
+    background: #f9f7ef;
+  }
+  .brand {
+    font-size: 28px;
+    gap: 6px;
+  }
+  .brand span {
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+  .brand small,
+  nav,
+  .intro,
+  .route-card,
+  footer,
+  .controls-hint {
+    display: none;
+  }
+  .audio-controls {
+    margin-left: auto;
+    gap: 6px;
+  }
+  .audio-controls input {
+    width: 54px;
+  }
+  header button,
+  .audio-controls button,
+  .option-row button,
+  .part-navigation button,
+  .camera-buttons button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  main {
+    position: static;
+    height: 100dvh;
+  }
+  #scene {
+    top: var(--header-height);
+    height: 42dvh;
+  }
+  .panel,
+  #simulation-panel {
+    position: fixed;
+    top: calc(var(--header-height) + 42dvh);
+    bottom: calc(68px + var(--bottom-inset));
+    left: max(8px, env(safe-area-inset-left));
+    right: max(8px, env(safe-area-inset-right));
+    width: auto;
+    max-height: none;
+    padding: 12px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: #f9f7ef;
+  }
+  .panel h2 {
+    font-size: 23px;
+    margin-top: 6px;
+  }
+  .panel h2 + p {
+    margin: 2px 0 8px;
+  }
+  .material {
+    padding: 8px 0;
+  }
+  .option-row {
+    margin: 8px 0;
+  }
+  .part-navigation {
+    margin: 8px 0;
+  }
+  .part-note {
+    display: block;
+  }
+  .bottom {
+    position: fixed;
+    left: max(8px, env(safe-area-inset-left));
+    right: max(8px, env(safe-area-inset-right));
+    bottom: var(--bottom-inset);
+  }
+  #start {
+    width: 100%;
+    min-height: 52px;
+  }
+  #status,
+  body[data-phase='procession'] #status {
+    position: fixed;
+    top: calc(var(--header-height) + 6px);
+    bottom: auto;
+    right: 8px;
+    left: 8px;
+    max-width: none;
+    width: auto;
+    padding: 5px 8px;
+    border-radius: 4px;
+    background: #f9f7efe6;
+    text-align: center;
+    font-size: 11px;
+  }
+  body[data-phase='workshop'] #status {
+    display: none;
+  }
+  body[data-phase='procession'] #scene {
+    height: calc(50dvh - var(--header-height));
+  }
+  #simulation-panel {
+    top: 50dvh;
+    bottom: calc(124px + var(--bottom-inset));
+  }
+  #play-controls {
+    position: fixed;
+    bottom: var(--bottom-inset);
+    left: max(8px, env(safe-area-inset-left));
+    right: max(8px, env(safe-area-inset-right));
+    width: auto;
+  }
+}
+/* Short landscape screens put the editor beside the scene instead of over it. */
+@media (orientation: landscape) and (max-height: 600px) {
+  #scene,
+  body[data-phase='procession'] #scene {
+    left: 260px;
+    width: calc(100% - 260px);
+    height: calc(100dvh - var(--header-height) - 130px - var(--bottom-inset));
+  }
+  body[data-phase='workshop'] #scene {
+    height: calc(100dvh - var(--header-height));
+  }
+  .panel,
+  #simulation-panel {
+    top: calc(var(--header-height) + 8px);
+    right: auto;
+    width: calc(252px - max(8px, env(safe-area-inset-left)));
+  }
+  #simulation-panel {
+    bottom: var(--bottom-inset);
+  }
+  .bottom {
+    right: auto;
+    width: calc(252px - max(8px, env(safe-area-inset-left)));
+  }
+  .primary span {
+    margin-left: 8px;
+  }
+  #play-controls,
+  body[data-phase='procession'] #status {
+    left: 268px;
+    right: max(8px, env(safe-area-inset-right));
+  }
+}
+@media (max-width: 360px) {
+  .brand span {
+    display: none;
   }
 }

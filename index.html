@@ -2,12 +2,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <meta name="theme-color" content="#ede8da" />
     <title>Jatra — Build a tradition. Carry it forward.</title>
     <link rel="stylesheet" href="/style.css" />
   </head>
-  <body>
+  <body data-phase="workshop">
     <canvas id="scene" aria-label="Interactive 3D Newari chariot workshop"></canvas>
     <header>
       <a class="brand" href="./"
@@ -30,7 +30,9 @@
             aria-label="Procession volume"
         /></label>
       </div>
-      <button id="soundless" title="Show keyboard controls">? <span>CONTROLS</span></button>
+      <button id="soundless" title="Show controls" aria-label="Show controls">
+        ? <span>CONTROLS</span>
+      </button>
     </header>
     <main>
       <section class="intro">
@@ -45,6 +47,10 @@
         <div class="panel-top"><span>YOUR CHARIOT</span><span id="part-count">01 / 05</span></div>
         <h2 id="part-title">Dhama</h2>
         <p id="part-subtitle">The central spine</p>
+        <div class="part-navigation">
+          <button id="up" aria-label="Previous part">↑</button
+          ><button id="down" aria-label="Next part">↓</button><span>EXPLORE CHARIOT PARTS</span>
+        </div>
         <div class="material">
           <span class="wood-swatch"></span>
           <div><small>SELECTED TIMBER</small><strong id="wood-name">Sau / Saur</strong></div>
@@ -70,16 +76,13 @@
           </div>
         </dl>
         <p class="part-note" id="part-note"></p>
-        <div class="part-navigation">
-          <button id="up" aria-label="Previous part">↑</button
-          ><button id="down" aria-label="Next part">↓</button><span>EXPLORE CHARIOT PARTS</span>
-        </div>
       </aside>
       <aside class="panel hidden" id="simulation-panel">
         <div class="panel-top">PROCESSION TELEMETRY <span class="live-dot">● LIVE</span></div>
         <h2 id="checkpoint">Basantapur</h2>
         <p id="next-stop">Next: Pyaphal</p>
         <p id="turn-preview" aria-label="Upcoming turn"></p>
+        <p id="road-warning" role="status" aria-live="polite">ON PATH</p>
         <div class="camera-buttons">
           <button id="overhead-view">Overhead view</button
           ><button id="reset-view">Reset view</button>
@@ -102,10 +105,6 @@
             <dd id="joints">—</dd>
           </div>
         </dl>
-        <div class="steer-buttons">
-          <button data-steer="ArrowLeft" aria-label="Hold to turn left">← Left</button
-          ><button data-steer="ArrowRight" aria-label="Hold to turn right">Right →</button>
-        </div>
         <label
           >TEAM EFFORT <span id="effort-value">0%</span
           ><meter id="effort" min="0" max="1" value="0"></meter></label
@@ -116,13 +115,23 @@
           >STRUCTURAL DAMAGE <span id="damage-value">0%</span
           ><meter id="damage" min="0" max="1" value="0"></meter
         ></label>
-        <p id="road-warning" role="status" aria-live="polite">ON PATH</p>
         <p class="part-note">
           8 m streets. Slow before sharp corners.<br />Heave together. Ease off before turns.<br />Apply
           the brakes gradually.
         </p>
-        <button id="rebuild" class="text-button">↺ Return to workshop</button>
       </aside>
+      <div id="play-controls" class="hidden" role="group" aria-label="Procession controls">
+        <div class="play-actions">
+          <button id="pause" aria-pressed="false">Pause</button>
+          <button id="rebuild">↺ Workshop</button>
+        </div>
+        <div class="hold-buttons">
+          <button data-hold="ArrowLeft" aria-label="Hold to turn left">← Left</button>
+          <button data-hold="ArrowRight" aria-label="Hold to turn right">Right →</button>
+          <button data-hold="Space" aria-label="Hold to brake">Brake</button>
+          <button data-hold="KeyW" aria-label="Hold to pull" class="pull-button">Pull</button>
+        </div>
+      </div>
       <div id="status" role="status" aria-live="polite">A tradition in your hands.</div>
       <section class="route-card">
         <div class="panel-top">
@@ -153,6 +162,13 @@
     <dialog id="help">
       <h2>Carry it together.</h2>
       <p>
+        <b>Touch:</b> Swipe the scene to orbit; pinch to zoom. In the workshop, tap ↑ / ↓ to select
+        parts and ← / → to customize, then tap Begin the procession. Hold Pull to build effort and
+        hold Left or Right with another finger to steer. Release Pull to coast; hold Brake to slow
+        down. Tap Pause to stop or resume, and Workshop to rebuild. Panels scroll to reveal more
+        details.
+      </p>
+      <p>
         <b>Workshop:</b> ↑ / ↓ select a part; ← / → change construction. Drag to orbit, scroll to
         zoom. Enter begins.
       </p>
@@ -160,10 +176,10 @@
         <b>Procession:</b> Drag the scene to orbit the camera and scroll to zoom. Use Overhead view
         to see over buildings; Reset view restores the default angle. The camera stays centered on
         the chariot, including while paused. Hold W to build pulling effort. ← / → turn the chariot
-        left / right, even from rest. You can also hold the on-screen Left / Right buttons. The
-        steering readout shows the direction received. If both are held, the last direction pressed
-        wins. Hold Space to progressively apply Ma eel brakes. Release to coast. P pauses. R returns
-        to the workshop.
+        left / right, even from rest. You can also hold the on-screen Pull, Left / Right, and Brake
+        buttons. The steering readout shows the direction received. If both are held, the last
+        direction pressed wins. Hold Space to progressively apply Ma eel brakes. Release to coast. P
+        pauses. R returns to the workshop.
       </p>
       <p>
         <b>Sound:</b> The procession begins with sound at a moderate volume. Use Mute sound and the
